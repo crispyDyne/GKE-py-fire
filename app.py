@@ -1,15 +1,11 @@
 import os
 
 from flask import Flask, request
-from flask_cors import CORS
 
 import firebase_admin 
 from firebase_admin import credentials, db
 
 app = Flask(__name__)
-
-CORS(app, resources={r"/*": {"origins": "*"}})
-
 
 
 
@@ -20,10 +16,10 @@ dbAddress = 'https://[projectID].firebaseio.com/'
 
 
 
-
 # initialize the firebase SDK
-credentials = None # look mom, no credentials!
-firebase_admin.initialize_app(credentials,{'databaseURL': dbAddress})
+credentials = None # the service account should provide the credentials
+# credentials = firebase_admin.credentials.ApplicationDefault() # same behavior
+fire = firebase_admin.initialize_app(credentials,{'databaseURL': dbAddress})
 
 @app.route('/')
 def hello_world(): # works on cloud run and GKE
@@ -41,4 +37,4 @@ def fire_post(): # works on cloud run. FAILS ON GKE!
     return {'results': jobRef.path}, 201
 
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+	app.run(debug=True,host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
