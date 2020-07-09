@@ -1,0 +1,12 @@
+#!/bin/bash
+# bash createCluster $1=[appName] $2=[containerURL]
+
+kubectl create deployment $1 --image=$2
+
+kubectl scale deployment $1 --replicas=3
+
+kubectl autoscale deployment $1 --cpu-percent=80 --min=1 --max=5
+
+kubectl expose deployment $1 --name=$1-service --type=LoadBalancer --port 80 --target-port 8080
+
+kubectl get service

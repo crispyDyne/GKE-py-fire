@@ -1,0 +1,3 @@
+#!/bin/bash
+# bash appUpdate $1=[appName] $2=[containerName] $3=[containerURL]
+kubectl set image deployment/$1 $2=$3
