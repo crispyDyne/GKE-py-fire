@@ -11,8 +11,6 @@ FROM python:3
 # FROM python:3-alpine
  
 COPY . /app
- 
-# Create and change to the app directory.
 WORKDIR /app
 
 RUN pip install --no-cache-dir -r requirements.txt

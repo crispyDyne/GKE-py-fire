@@ -1,0 +1,6 @@
+#!/bin/bash
+# Replace [projectID], [GoogleServiceAccount], and [containerImageURL] with your values
+
+bash createCluster [projectID] works [GoogleServiceAccount]
+
+bash deployApp [containerImageURL]

@@ -3,9 +3,8 @@ import os
 from flask import Flask, request
 
 import firebase_admin 
-from firebase_admin import credentials, db
-
-app = Flask(__name__)
+from firebase_admin import firestore, db
+import time
 
 
 
@@ -17,24 +16,33 @@ dbAddress = 'https://[projectID].firebaseio.com/'
 
 
 # initialize the firebase SDK
-credentials = None # the service account should provide the credentials
-# credentials = firebase_admin.credentials.ApplicationDefault() # same behavior
-fire = firebase_admin.initialize_app(credentials,{'databaseURL': dbAddress})
+cred = None # the service account should provide the credentials
+firebase_admin.initialize_app(cred,options ={'databaseURL': dbAddress})
+
+# get firestore client 
+fs = firestore.client()
+
+app = Flask(__name__)
 
 @app.route('/')
-def hello_world(): # works on cloud run and GKE
+def hello_world():
     print('Hello, World print statement!')
     return 'Hello, World!'
 
 @app.route('/simplepost', methods = ['POST'])
-def simple_post():# works on cloud run and GKE
+def simple_post():
     content = request.get_json()
     return {'results': content}, 201
 
 @app.route('/firepost', methods = ['POST'])
-def fire_post(): # works on cloud run. FAILS ON GKE!
+def fire_post():
     jobRef = db.reference('jobs/').push()
     return {'results': jobRef.path}, 201
+
+@app.route('/storepost', methods = ['POST'])
+def store_post(): 
+    doc = fs.collection('junk').add({"more":'trash'})
+    return {'results': doc[1].path}, 201
 
 if __name__ == '__main__':
 	app.run(debug=True,host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
